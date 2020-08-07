@@ -28,7 +28,7 @@ func TestMaintainMode(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -71,7 +71,7 @@ func TestMaintainOwner(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -105,7 +105,7 @@ func TestCompressMaintainMode(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -155,7 +155,7 @@ func TestCompressMaintainOwner(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 

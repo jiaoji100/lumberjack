@@ -40,7 +40,7 @@ func TestNewFile(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 	existsWithContent(logFile(dir), b, t)
@@ -63,7 +63,7 @@ func TestOpenExisting(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -85,7 +85,7 @@ func TestWriteTooLong(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("booooooooooooooo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	notNil(err, t)
 	equals(0, n, t)
 	equals(err.Error(),
@@ -105,7 +105,7 @@ func TestMakeLogDir(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 	existsWithContent(logFile(dir), b, t)
@@ -120,7 +120,7 @@ func TestDefaultFilename(t *testing.T) {
 	l := &Logger{}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 
 	isNil(err, t)
 	equals(len(b), n, t)
@@ -141,7 +141,7 @@ func TestAutoRotate(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -151,7 +151,7 @@ func TestAutoRotate(t *testing.T) {
 	newFakeTime()
 
 	b2 := []byte("foooooo!")
-	n, err = l.Write(b2)
+	n, err = l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 
@@ -186,7 +186,7 @@ func TestFirstWriteRotate(t *testing.T) {
 
 	// this would make us rotate
 	b := []byte("fooo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -210,7 +210,7 @@ func TestMaxBackups(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -221,7 +221,7 @@ func TestMaxBackups(t *testing.T) {
 
 	// this will put us over the max
 	b2 := []byte("foooooo!")
-	n, err = l.Write(b2)
+	n, err = l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 
@@ -238,7 +238,7 @@ func TestMaxBackups(t *testing.T) {
 
 	// this will make us rotate again
 	b3 := []byte("baaaaaar!")
-	n, err = l.Write(b3)
+	n, err = l.RollBySizeAndWrite(b3)
 	isNil(err, t)
 	equals(len(b3), n, t)
 
@@ -291,7 +291,7 @@ func TestMaxBackups(t *testing.T) {
 
 	// this will make us rotate again
 	b4 := []byte("baaaaaaz!")
-	n, err = l.Write(b4)
+	n, err = l.RollBySizeAndWrite(b4)
 	isNil(err, t)
 	equals(len(b4), n, t)
 
@@ -365,7 +365,7 @@ func TestCleanupExistingBackups(t *testing.T) {
 	newFakeTime()
 
 	b2 := []byte("foooooo!")
-	n, err := l.Write(b2)
+	n, err := l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 
@@ -392,7 +392,7 @@ func TestMaxAge(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -403,7 +403,7 @@ func TestMaxAge(t *testing.T) {
 	newFakeTime()
 
 	b2 := []byte("foooooo!")
-	n, err = l.Write(b2)
+	n, err = l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 	existsWithContent(backupFile(dir), b, t)
@@ -425,7 +425,7 @@ func TestMaxAge(t *testing.T) {
 	newFakeTime()
 
 	b3 := []byte("baaaaar!")
-	n, err = l.Write(b3)
+	n, err = l.RollBySizeAndWrite(b3)
 	isNil(err, t)
 	equals(len(b3), n, t)
 	existsWithContent(backupFile(dir), b2, t)
@@ -520,12 +520,12 @@ func TestLocalTime(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
 	b2 := []byte("fooooooo!")
-	n2, err := l.Write(b2)
+	n2, err := l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n2, t)
 
@@ -547,7 +547,7 @@ func TestRotate(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -582,7 +582,7 @@ func TestRotate(t *testing.T) {
 	fileCount(dir, 2, t)
 
 	b2 := []byte("foooooo!")
-	n, err = l.Write(b2)
+	n, err = l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 
@@ -605,7 +605,7 @@ func TestCompressOnRotate(t *testing.T) {
 	}
 	defer l.Close()
 	b := []byte("boo!")
-	n, err := l.Write(b)
+	n, err := l.RollBySizeAndWrite(b)
 	isNil(err, t)
 	equals(len(b), n, t)
 
@@ -665,7 +665,7 @@ func TestCompressOnResume(t *testing.T) {
 	newFakeTime()
 
 	b2 := []byte("boo!")
-	n, err := l.Write(b2)
+	n, err := l.RollBySizeAndWrite(b2)
 	isNil(err, t)
 	equals(len(b2), n, t)
 	existsWithContent(filename, b2, t)
